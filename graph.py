@@ -60,14 +60,14 @@ class Graph(object):
         self.edges = tuple(tuple(x) for x in edges)
         if n_edges != len(edges):
             print("Warning incorrect number of edges")
-    
+
     def visualize(self, name="graph"):
         """Visualize graph using 'graphviz' library.
 
         To install graphviz you can use 'pip install graphviz'.
         Notice that graphviz should also be installed in your system.
         For ubuntu, you can install it using 'sudo apt install graphviz'
-        
+
         :param name: Name of the generated file, defaults to "graph"
         :type name: str, optional
         :raises ImportError: When unable to import graphviz.
@@ -81,7 +81,7 @@ class Graph(object):
                 "or install it typing 'pip install graphviz'"
             )
             raise ImportError(msg)
-        
+
         # Create graph
         dot = Graph()
         # Create nodes
@@ -94,30 +94,31 @@ class Graph(object):
         dot.render(name, view=True, cleanup=True)
 
     def min_vertex_cover(self, solver):
+        # Instantiate formula
+        formula = wcnf.WCNFFormula()
 
-		# Instantiate formula
-		formula = wcnf.WCNFFormula()
+        # Create variables
+        nodes = [formula.new_var() for _ in range(self.n_nodes)]
 
-		# Create variables
-		nodes = [formula.new_var() for _ in range(self.n_nodes)]
+        # Create soft clauses
+        for n in nodes:
+            formula.add_clause([-n],weight=1)
 
-		# Create soft clauses
-		for n in nodes:
-			formula.add_clause([-n],weight=1)
+        # Create hard clauses
+        for n1,n2 in self.edges:
+            #Per no afegir un 0, si tinc unva variable amb valor zero.
+            v1,v2 = nodes[n1-1],nodes[n2-1]
+            # Ja que podriem anar afegint softs, hards intefcalades -->top_weight
+            formula.add_clause([v1,v2],weight=wcnf.TOP_WEIGHT)
 
-		# Create soft clauses
-		for n1,n2 in self.edges:
-			#Per no afegir un 0, si tinc unva variable amb valor zero.
-			v1,v2 = nodes[n1-1],nodes[n2-1] 
-			# Ja que podriem anar afegint softs, hards intefcalades -->top_weight
-			formula.add_clause([n1,n2],weight=wcnf.TOP_WEIGHT)
+        # Solve formula
+        opt,model = solver.solve(formula)
+        formula.write_dimacs() #Por defecto ya escribe en stdout
 
-		# Solve formula
-		opt,model = solver.solve(formula)
-		formula.write_dimacs() #Por defecto ya escribe en stdout
+        print(model)
+        # Aplicar solución al dominio original.
+        return [n for n in model if n > 0]
 
-		# Aplicar solución al dominio original.
-		return [n for n in model if n > 0]
 
 
     def max_clique(self, solver):
@@ -135,7 +136,7 @@ class Graph(object):
         :return: A solution (list of nodes).
         """
         raise NotImplementedError("Your Code Here")
-    
+
 
 # Program main
 ###############################################################################
@@ -172,7 +173,7 @@ def parse_command_line_arguments(argv=None):
 
     parser.add_argument("graph", help="Path to the file that descrives the"
                                       " input graph.")
-    
+
     parser.add_argument("--visualize", "-v", action="store_true",
                         help="Visualize graph (graphviz required)")
 

@@ -115,7 +115,6 @@ class Graph(object):
         opt,model = solver.solve(formula)
         formula.write_dimacs() #Por defecto ya escribe en stdout
 
-        print(model)
         # Aplicar solución al dominio original.
         return [n for n in model if n > 0]
 

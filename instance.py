@@ -10,7 +10,8 @@ class Instance:
         self.c = {} #conflicts
 
     def add_elem(self,typ,value):
-        # Function to generalize each add function.
+        """" Function to generalize each add function and consequently
+        ease the addition. """
         if   typ == 'p': self.set_pkgs(value[-1])
         elif typ == 'n': self.add_pkg(value[0])
         elif typ == 'd': self.add_dependency(value[0],value[1:])
@@ -23,16 +24,18 @@ class Instance:
         self.n.append(elem)
 
     def add_dependency(self,pkg,value):
-        """If key exists, append the list(value) to key list,
-        creates key list, appending list(value) otherwise.
-        Notice d myapp gcc, d myapp python2 python3 is
-        gcc ∧ (python2 ∨ python3) so we need a list of lists."""
+        """ Notice d myapp gcc, d myapp python2 python3 is
+        gcc ∧ (python2 ∨ python3) so we need a list of lists.
+        The list represents the conjunctions and the list the
+        disjunctions"""
 
         if pkg not in self.get_pkgs():
             raise PackageNotFoundException(pkg)
+
         self.d.setdefault(pkg,[]).append(value)
 
     def add_conflict(self,pkg,value):
+        """Each element of the key list represent a conjunction"""
         if pkg not in self.get_pkgs():
             raise PackageNotFoundException(pkg)
         self.c.setdefault(pkg,[]).append(value)

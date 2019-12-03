@@ -44,6 +44,7 @@ def software_package_upgrade(solver):
         for pj in C: # ᴧ pj ∈ C
             formula.add_clause([-X[pi],-X[pj]],weight=wcnf.TOP_WEIGHT)
 
+
     # Solve formula
     opt,model = solver.solve(formula)
     formula.write_dimacs()

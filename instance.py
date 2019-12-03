@@ -1,13 +1,21 @@
 import sys
-from exception import *
+
+class PackageNotFoundException(Exception):
+    """Raised when a package is not defined in valid packages"""
+    pass
+
+class UnexpectedPackagesException(Exception):
+    """Raised when number of packages defined in 'p', is different
+        with len of 'list'"""
+    pass
 
 class Instance:
 
     def __init__(self):
-        self.p = 0  #num_packages
-        self.n = [] #packages
-        self.d = {} #dependencies
-        self.c = {} #conflicts
+        self.p = 0      #num_packages
+        self.n = []  #packages
+        self.d = {}     #dependencies
+        self.c = {}     #conflicts
 
     def add_elem(self,typ,value):
         """" Function to generalize each add function and consequently
@@ -36,8 +44,10 @@ class Instance:
 
     def add_conflict(self,pkg,value):
         """Each element of the key list represent a conjunction"""
+
         if pkg not in self.get_pkgs():
             raise PackageNotFoundException(pkg)
+
         self.c.setdefault(pkg,[]).append(value)
 
     def get_pkgs(self):
@@ -50,4 +60,7 @@ class Instance:
         return self.c.get(pkg)
 
     def get_instance(self):
+        if int(self.p) != len(self.n):
+            raise UnexpectedPackagesException("Expected {} given {}".format(self.p,len(self.n)))
+
         return self.p,self.n,self.d,self.c

@@ -85,13 +85,14 @@ class WCNFFormula(object):
         return soft_ok and hard_ok
 
     def to_13wpm(self):
-        """Generates a new formula that is the 1,3-WPM equivalent of self.
-        Notation: bm (reification_vars), Cm(self soft clauses and bi).
-        wi,Ci (current weight and clause), li (current literal of Ci)."""
+        """Generates a new formula that is the 1,3-WPM equivalent to self.
+        Notation: bm (reification_vars), Cm(self soft plus bi and self hard).
+        wi,Ci (current weight and clause), li (current literal of Ci).
+        zi and bi are reification variables. """
         formula13 = WCNFFormula()
         bm,Cm = {},[]
 
-        # new_var() returns next id available, so var1 (f13) is var1 (self)
+        # new_var() returns next id available, so var1 (form) is var1 (self)
         for _ in range(self.num_vars): formula13.new_var()
 
         # Reification variables for each soft clause.
@@ -108,28 +109,28 @@ class WCNFFormula(object):
         for Ci in Cm:
             if len(Ci) == 3: formula13.add_clause(Ci,0)
             else:
-                for Ci_13 in self.clause_to13(Ci,formula13):
+                for Ci_13 in self._clause_to13(Ci,formula13):
                     formula13.add_clause(Ci_13,0)
 
         return formula13
 
-    def clause_to13(self,Ci,f13):
+    def _clause_to13(self,Ci,form):
         """Tests if size is less than 3. Then add randomly a
-        element of clause. Calls _clause_to13 otherwise."""
+        element of clause. Calls _parse_to13 otherwise."""
         if len(Ci) < 3:
             return [Ci + [Ci[0] for _ in range(3-len(Ci))]]
         else:
-            return self._clause_to13([],Ci,f13)
+            return self._parse_to13([],Ci,form)
 
 
-    def _clause_to13(self,C,Ci,f13):
-        """Parses recursivly a clause with size bigger than 3
+    def _parse_to13(self,C,Ci,form):
+        """Parses recursivly a clause Ci with size greater than 3
         in subclauses of length 3."""
         if len(Ci) == 3:
             return C + [Ci]
         else:
-            zi = f13.new_var()
-            return self._clause_to13(C+[Ci[0:2]+[zi]], [-zi]+Ci[2:], f13)
+            zi = form.new_var()
+            return self._parse_to13(C+[Ci[0:2]+[zi]], [-zi]+Ci[2:], form)
 
     def sum_soft_weights(self):
         return self._sum_soft_weights

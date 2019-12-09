@@ -15,3 +15,20 @@ print(divide([],[5,6,7,8]))
                         else -vars[abs(li)] for li in Ci] + [bi])'''
 
                         [(1,[1,-2]),(3,[2,3,4,1]),(2,(-3,-2))]
+
+
+    #
+    # formula1 = wcnf.WCNFFormula()
+    # formula1.new_var()
+    # formula1.new_var()
+    # formula1.new_var()
+    # formula1.new_var()
+    # formula1.add_clause([1,-2],1)
+    # formula1.add_clause([2,3,4,1],3)
+    # formula1.add_clause([-3,-2],2)
+    # formula1.add_clause([1,2,3,-4],wcnf.TOP_WEIGHT)
+    # formula1.add_clause([-1,3],wcnf.TOP_WEIGHT)
+    # print('-'*20)
+    # formula1 = formula1.to_13wpm()
+    # print(formula1)
+    # print(formula1.is_13wpm())

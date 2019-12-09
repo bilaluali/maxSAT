@@ -117,8 +117,6 @@ class Graph(object):
         # Apply solution to our domain
         return [n for n in model if n > 0]
 
-
-
     def max_clique(self, solver):
         """Computes the maximum clique of the graph.
         :param solver: An instance of MaxSATRunner.
@@ -142,7 +140,8 @@ class Graph(object):
         # Solve formula
         opt,model = solver.solve(formula)
         formula.write_dimacs()
-        # Aplicar solución al dominio original.
+
+        # Apply solution to our domain.
         return [n for n in model if n > 0]
 
     def max_cut(self, solver):
@@ -151,7 +150,26 @@ class Graph(object):
         :param solver: An instance of MaxSATRunner.
         :return: A solution (list of nodes).
         """
-        raise NotImplementedError("Your Code Here")
+        # Instantiate formula
+        formula = wcnf.WCNFFormula()
+
+        # Create variables
+        nodes = [formula.new_var() for _ in range(self.n_nodes)]
+
+        # Create soft clauses
+        for i,n1 in enumerate(nodes,1):
+            for n2 in nodes[i:]:
+                if (n1,n2) in self.edges or (n2,n1) in self.edges:
+                    v1,v2 = nodes[n1-1],nodes[n2-1]
+                    formula.add_clause([v1,v2],weight=1)
+                    formula.add_clause([-v1,-v2],weight=1)
+
+        # Solve formula
+        opt,model = solver.solve(formula)
+        formula.write_dimacs()
+
+        # Apply solution to our domain.
+        return [abs(n) for n in model if n < 0],[n for n in model if n > 0]
 
 
 # Program main
@@ -166,14 +184,15 @@ def main(argv=None):
     if args.visualize:
         graph.visualize(os.path.basename(args.graph))
 
-    #min_vertex_cover = graph.min_vertex_cover(solver)
-    #print("MVC", " ".join(map(str, min_vertex_cover)))
+    min_vertex_cover = graph.min_vertex_cover(solver)
+    print("MVC", " ".join(map(str, min_vertex_cover)))
 
     max_clique = graph.max_clique(solver)
     print("MCLIQUE", " ".join(map(str, max_clique)))
 
-    #max_cut = graph.max_cut(solver)
-    #print("MCUT", " ".join(map(str, max_cut)))
+    S,T = graph.max_cut(solver)
+    print("MCUT","S:"," ".join(map(str, S)))
+    print("MCUT","T:"," ".join(map(str, T)))
 
 
 

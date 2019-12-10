@@ -1,5 +1,9 @@
-p spu 4
+p spu 8
 n snap
 n snap
 n snap
 n snap
+n python
+n python
+n python2
+n python2

@@ -86,9 +86,10 @@ class WCNFFormula(object):
 
     def to_13wpm(self):
         """Generates a new formula that is the 1,3-WPM equivalent to self.
-        Notation: bm (reification_vars), Cm(self soft plus bi and self hard).
-        wi,Ci (current weight and clause), li (current literal of Ci).
-        zi and bi are reification variables. """
+        Notation:
+        • bm (reification_vars), Cm(self soft plus bi and self hard clauses).
+        • wi,Ci (current weight and clause), li (current literal of Ci).
+        • zi and bi are reification variables. """
         formula13 = WCNFFormula()
         bm,Cm = {},[]
 

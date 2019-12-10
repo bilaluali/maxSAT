@@ -130,7 +130,7 @@ class Graph(object):
         # Create soft clauses
         for n in nodes: formula.add_clause([n],weight=1)
 
-        # Generating all unique edges get those not belonging.
+        # Generating all unique edges and get those not belonging.
         for i,n1 in enumerate(nodes,1):
             for n2 in nodes[i:]:
                 if (n1,n2) not in self.edges and (n2,n1) not in self.edges:
@@ -168,8 +168,8 @@ class Graph(object):
         opt,model = solver.solve(formula)
         formula.write_dimacs()
 
-        # Apply solution to our domain.
-        return [abs(n) for n in model if n < 0],[n for n in model if n > 0]
+        # Apply solution to our domain. Return S.
+        return [abs(n) for n in model if n < 0]
 
 
 # Program main
@@ -190,10 +190,8 @@ def main(argv=None):
     max_clique = graph.max_clique(solver)
     print("MCLIQUE", " ".join(map(str, max_clique)))
 
-    S,T = graph.max_cut(solver)
-    print("MCUT","S:"," ".join(map(str, S)))
-    print("MCUT","T:"," ".join(map(str, T)))
-
+    max_cut = graph.max_cut(solver)
+    print("MCUT","S:"," ".join(map(str, max_cut)))
 
 
 # Utilities

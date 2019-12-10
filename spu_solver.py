@@ -17,9 +17,9 @@ def parse_instance(path):
 
 def software_package_upgrade(solver):
     """ Notation: pi (package i), xi (variable representing pi)
-    D (dependeces conjunction of pi), d (disjunction of packages pj)
-    C (conflicts conjuction of pi), c(packages pj)
-    X (set of variables representing the packages)
+    • D (dependeces conjunction of pi), d (disjunction of packages pj)
+    • C (conflicts conjuction of pi), c(packages pj)
+    • X (set of variables representing the packages)
     """
 
     formula = wcnf.WCNFFormula()
@@ -44,7 +44,6 @@ def software_package_upgrade(solver):
         for pj in C: # ᴧ pj ∈ C
             formula.add_clause([-X[pi],-X[pj]],weight=wcnf.TOP_WEIGHT)
 
-
     # Solve formula
     opt,model = solver.solve(formula)
     formula.write_dimacs()
@@ -66,7 +65,6 @@ def get_key(val,dict):
     """Get any key by value. Notice values will be the
     identifiers returned by formula.new_var(), append
     they will be unique. So we can do it."""
-
     for k,v in dict.items():
          if val == v:
              return k
